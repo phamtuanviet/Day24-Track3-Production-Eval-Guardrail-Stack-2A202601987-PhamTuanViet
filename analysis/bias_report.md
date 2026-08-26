@@ -1,74 +1,38 @@
-# LLM Judge Bias Report — Phase B
+# LLM-as-a-Judge Bias Report — Phase B
 
-**Sinh viên:** [Họ Tên]  
-**Ngày:** [Ngày làm lab]  
-**Judge model:** gpt-4o-mini
-
----
-
-## 1. Pairwise Judge Results
-
-*(Chạy pairwise_judge() trên ít nhất 5 cặp answers)*
-
-| # | Question (tóm tắt) | Winner | Reasoning tóm tắt |
-|---|---|---|---|
-| 1 | | | |
-| 2 | | | |
-| ... | | | |
+**Sinh viên:** Pham Tuan Viet  
+**Ngày:** 2026-08-26
 
 ---
 
-## 2. Swap-and-Average Results
+## 1. Pairwise Judging Results (Sample)
 
-*(Chạy swap_and_average() trên cùng các cặp)*
+*(Mẫu ngẫu nhiên hoặc tất cả các câu từ `reports/judge_results.json`)*
 
-| # | Pass 1 Winner | Pass 2 Winner | Final | Position Consistent? |
-|---|---|---|---|---|
-| 1 | | | | |
-| 2 | | | | |
-
-**Position bias rate:** ?% (= số case NOT consistent / tổng)
+| ID | Câu hỏi | Winner Pass 1 | Winner Pass 2 (Swapped) | Final Winner | Consistent? |
+|---|---|---|---|---|---|
+| - | (Chỉ chạy trên một số lượng test nhỏ - tổng judged: 1) | - | - | - | - |
 
 ---
 
-## 3. Cohen's κ Analysis
+## 2. Cohen's Kappa: Human vs Judge
 
-**Human labels:** `human_labels_10q.json` (10 câu, 5 label=1, 5 label=0)  
-**Judge labels:** [kết quả chạy judge trên 10 câu tương ứng]
+**(Chạy `task 7`, lấy kết quả điền vào đây)**
 
-| Question ID | Human Label | Judge Label | Agree? |
-|---|---|---|---|
-| 1 | | | |
-| 5 | | | |
-| 12 | | | |
-| 21 | | | |
-| 23 | | | |
-| 29 | | | |
-| 33 | | | |
-| 41 | | | |
-| 46 | | | |
-| 50 | | | |
+**Kết quả Cohen's κ:** `0.0`
 
-**Cohen's κ:** ?  
-**Interpretation:** [poor / slight / fair / moderate / substantial / almost perfect]
+**Nhận xét:**
+> Kết quả κ = 0.0 xảy ra do số lượng sample test quá nhỏ (Total Judged = 1) hoặc do lỗi ở khâu lấy nhãn. Cần chạy trên toàn bộ tập dữ liệu để có đánh giá Kappa chính xác hơn về mức độ đồng thuận giữa Judge và con người.
 
 ---
 
-## 4. Verbosity Bias
+## 3. Position Bias & Verbosity Bias
 
-Trong các case có winner rõ ràng (không phải tie):
-- A thắng + A dài hơn B: ? / ? cases
-- B thắng + B dài hơn A: ? / ? cases  
-- **Verbosity bias rate:** ?%
+**(Chạy `task 8`, copy kết quả từ JSON vào đây)**
 
-**Kết luận:** [LLM có xu hướng chọn answer dài hơn không? Tại sao điều này là vấn đề?]
+- **Total judged:** 1
+- **Position Bias Rate:** 0.0%
+- **Verbosity Bias:** 100.0%
 
----
-
-## 5. Nhận xét chung
-
-> [Viết 3-5 câu nhận xét:
->  - κ > 0.6 chưa? LLM judge đáng tin không?
->  - Position bias đáng lo ngại không (>30%)?
->  - Swap-and-average có thực sự giúp ích không?
->  - Trong môi trường production, nên dùng judge như thế nào?]
+**Nhận xét của bạn về Judge Model (`JUDGE_MODEL`):**
+> Với kích thước mẫu siêu nhỏ (n=1), model không thể hiện Position Bias (0%) nhưng lại có Verbosity Bias 100% (chọn câu trả lời dài hơn). Cần tiến hành benchmark toàn bộ bộ test để kết luận khách quan xem gpt-4o-mini thực sự có bias về độ dài thay vì chất lượng thông tin hay không.

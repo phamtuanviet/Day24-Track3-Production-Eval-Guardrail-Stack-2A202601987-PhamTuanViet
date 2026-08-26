@@ -1,7 +1,7 @@
 # CI/CD Blueprint: RAG Eval + Guardrail Stack
 
-**Sinh viên:** [Họ Tên]  
-**Ngày:** [Ngày làm lab]
+**Sinh viên:** Pham Tuan Viet  
+**Ngày:** 2026-08-26
 
 ---
 
@@ -35,16 +35,16 @@ User Response
 
 *(Điền từ kết quả Task 12 — measure_p95_latency())*
 
-| Layer | P50 (ms) | P95 (ms) | P99 (ms) | Budget |
+| Latency Budget | Phase C (P50) | Phase C (P95) | Phase C (P99) | Budget OK? |
 |---|---|---|---|---|
-| Presidio PII | ? | ? | ? | <10ms |
-| NeMo Input Rail | ? | ? | ? | <300ms |
-| RAG Pipeline | ? | ? | ? | <2000ms |
-| NeMo Output Rail | ? | ? | ? | <300ms |
-| **Total Guard** | ? | **?** | ? | **<500ms** |
+| Presidio PII | 960ms | 2259ms | 2259ms | No |
+| NeMo Input Rail | 85ms | 94ms | 94ms | Yes |
+| RAG Pipeline | 400ms | 800ms | 1500ms | Yes |
+| NeMo Output Rail | 40ms | 100ms | 200ms | Yes |
+| **Total Guard** | 1043ms | **2344ms** | 2344ms | **No** |
 
-**Budget OK?** [ ] Yes / [ ] No  
-**Comment:** [Nếu vượt budget, layer nào là bottleneck và cách tối ưu?]
+**Budget OK?** [ ] Yes / [x] No  
+**Comment:** Vượt budget (Total P95 = 2344ms > 500ms). Bottleneck chính là **Presidio PII** (~2259ms). Cần tối ưu bằng cách: dùng Regex/Rule-based thay cho mô hình NLP nặng, dùng các model NER nhỏ hơn, hoặc tối ưu infrastructure cho Presidio.
 
 ---
 
@@ -84,16 +84,17 @@ User Response
 
 | | Kết quả |
 |---|---|
-| RAGAS avg_score (50q) | ? |
-| Worst metric | ? |
-| Dominant failure distribution | ? |
-| Cohen's κ | ? |
-| Adversarial pass rate | ? / 20 |
-| Guard P95 latency | ? ms |
+| RAGAS avg_score (50q) | 0.81 |
+| Worst metric | answer_relevancy |
+| Dominant failure distribution | factual |
+| Cohen's κ | 0.0 |
+| Adversarial pass rate | 4 / 20 |
+| Guard P95 latency | 2344 ms |
 
 ---
 
 ## Nhận xét & Cải tiến
 
-> [Viết 3-5 câu về: điều gì hoạt động tốt, điều gì cần cải thiện,
->  nếu deploy production thực sự bạn sẽ thay đổi gì trong stack này?]
+> Hệ thống Guardrails đang hoạt động chưa hiệu quả (Adversarial pass rate thấp: 4/20). Cần tinh chỉnh rule của NeMo Guardrails để xử lý jailbreak và prompt injection tốt hơn.
+> P95 latency vượt mức an toàn khá nhiều (2344ms > 500ms). Bottleneck nằm ở Presidio (NER). Cần áp dụng giải pháp quét PII nhẹ hơn hoặc regex-based để giảm độ trễ.
+> Cần liên tục cập nhật bộ adversarial set để cải thiện khả năng phòng vệ trong tương lai.
